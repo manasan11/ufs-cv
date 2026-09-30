@@ -56,13 +56,13 @@ export class AuthService {
 
     this.api.me().subscribe({
       next: (user) => this.userSignal.set(user),
-      error: () => this.clearSession(),
+      error: () => this.logout(),
     });
   }
 
   logout(): void {
     this.clearSession();
-    void this.router.navigate(['/cvs']);
+    void this.router.navigate(['/login']);
   }
 
   private storeSession(result: { token: string; user: AuthUser }): void {

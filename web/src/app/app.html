@@ -1,14 +1,16 @@
 <div class="app-shell">
   <header class="topbar">
-    <a class="brand" routerLink="/cvs">
+    <a class="brand" [routerLink]="auth.isAuthenticated() ? '/cvs' : '/login'">
       <span class="brand-mark" aria-hidden="true">CV</span>
       <span>CV Generator</span>
     </a>
 
-    <nav class="nav" aria-label="Main">
-      <a routerLink="/cvs" routerLinkActive="active">CVs</a>
-      <a routerLink="/cvs/new" routerLinkActive="active">Add User</a>
-    </nav>
+    @if (auth.isAuthenticated()) {
+      <nav class="nav" aria-label="Main">
+        <a routerLink="/cvs" routerLinkActive="active">CVs</a>
+        <a routerLink="/cvs/new" routerLinkActive="active">Add User</a>
+      </nav>
+    }
 
     <div class="session">
       @if (auth.user(); as user) {
