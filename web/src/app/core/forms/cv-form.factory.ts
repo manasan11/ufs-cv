@@ -57,12 +57,12 @@ export class CvFormFactory {
   buildForm(): CvForm {
     return this.fb.group({
       personal: this.fb.group({
-        fullName: ['', [Validators.required, Validators.maxLength(4)]],
+        fullName: ['', [Validators.required, Validators.maxLength(120)]],
         email: ['', [Validators.required, Validators.email, Validators.maxLength(200)]],
         phone: ['', [Validators.maxLength(40)]],
         headline: ['', [Validators.maxLength(160)]],
         location: ['', [Validators.maxLength(160)]],
-        summary: ['', [Validators.maxLength(50)]],
+        summary: ['', [Validators.maxLength(2000)]],
       }),
       experiences: this.fb.array<ExperienceForm>([]),
       education: this.fb.array<EducationForm>([]),
@@ -96,7 +96,7 @@ export class CvFormFactory {
 
   skill(): SkillForm {
     return this.fb.group({
-      name: ['', [Validators.required, Validators.maxLength(10)]],
+      name: ['', [Validators.required, Validators.maxLength(60)]],
       category: ['', [Validators.maxLength(40)]],
       proficiency: this.fb.control<number | null>(null, [Validators.min(1), Validators.max(5)]),
     });

@@ -16,7 +16,7 @@
   <section class="card"><p class="state">Loading CV&hellip;</p></section>
 } @else {
   <form [formGroup]="form" (ngSubmit)="save()" novalidate>
-    <section class="card">
+    <section class="card" formGroupName="personal">
       <h2>Personal details</h2>
 
       <div class="grid-2">
