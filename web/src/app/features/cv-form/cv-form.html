@@ -1,0 +1,358 @@
+<section class="page-head">
+  <div>
+    <h1>{{ isEdit() ? 'Edit CV' : 'Add User' }}</h1>
+    <p class="hint">
+      {{
+        isEdit()
+          ? 'Update this profile and save your changes.'
+          : 'Create a new CV profile. Every field marked required must be filled in.'
+      }}
+    </p>
+  </div>
+  <a class="btn-secondary" routerLink="/cvs">Back to list</a>
+</section>
+
+@if (loading()) {
+  <section class="card"><p class="state">Loading CV&hellip;</p></section>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <section class="card">
+      <h2>Personal details</h2>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="fullName">Full name *</label>
+          <input
+            id="fullName"
+            formControlName="fullName"
+            [attr.aria-invalid]="controlInvalid(form.controls.personal, 'fullName')"
+          />
+          @if (controlInvalid(form.controls.personal, 'fullName')) {
+            <span class="field-error">Full name is required (max 120 characters)</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="email">Email *</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            [attr.aria-invalid]="controlInvalid(form.controls.personal, 'email')"
+          />
+          @if (controlInvalid(form.controls.personal, 'email')) {
+            <span class="field-error">A valid email address is required</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="phone">Phone</label>
+          <input
+            id="phone"
+            type="tel"
+            formControlName="phone"
+            placeholder="+1 555 0100"
+            [attr.aria-invalid]="controlInvalid(form.controls.personal, 'phone')"
+          />
+          @if (controlInvalid(form.controls.personal, 'phone')) {
+            <span class="field-error">Max 40 characters</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="location">Location</label>
+          <input
+            id="location"
+            formControlName="location"
+            placeholder="Berlin, Germany"
+            [attr.aria-invalid]="controlInvalid(form.controls.personal, 'location')"
+          />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="headline">Headline</label>
+        <input
+          id="headline"
+          formControlName="headline"
+          placeholder="Senior Backend Engineer"
+          [attr.aria-invalid]="controlInvalid(form.controls.personal, 'headline')"
+        />
+        <span class="hint">Shown under your name on the PDF.</span>
+      </div>
+
+      <div class="field">
+        <label for="summary">Professional summary *</label>
+        <textarea
+          id="summary"
+          rows="4"
+          formControlName="summary"
+          [attr.aria-invalid]="controlInvalid(form.controls.personal, 'summary')"
+        ></textarea>
+        @if (controlInvalid(form.controls.personal, 'summary')) {
+          <span class="field-error">A summary is required (max 2000 characters)</span>
+        }
+      </div>
+    </section>
+
+    <section class="card" formArrayName="experiences">
+      <div class="section-head">
+        <h2>Experience *</h2>
+        <button type="button" class="btn-secondary btn-small" (click)="addExperience()">
+          Add experience
+        </button>
+      </div>
+      <p class="hint">One line per achievement: the PDF turns separate lines into bullets.</p>
+
+      @for (group of experiences.controls; track group; let index = $index) {
+        <div class="row card-row" [formGroupName]="index">
+          <div class="row-head">
+            <strong>Experience {{ index + 1 }}</strong>
+            <button type="button" class="btn-danger btn-small" (click)="removeExperience(index)">
+              Remove
+            </button>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label [for]="'jobTitle-' + index">Job title *</label>
+              <input
+                [id]="'jobTitle-' + index"
+                formControlName="jobTitle"
+                [attr.aria-invalid]="controlInvalid(group, 'jobTitle')"
+              />
+              @if (controlInvalid(group, 'jobTitle')) {
+                <span class="field-error">Job title is required</span>
+              }
+            </div>
+
+            <div class="field">
+              <label [for]="'company-' + index">Company *</label>
+              <input
+                [id]="'company-' + index"
+                formControlName="company"
+                [attr.aria-invalid]="controlInvalid(group, 'company')"
+              />
+              @if (controlInvalid(group, 'company')) {
+                <span class="field-error">Company is required</span>
+              }
+            </div>
+
+            <div class="field">
+              <label [for]="'exp-location-' + index">Location</label>
+              <input [id]="'exp-location-' + index" formControlName="location" />
+            </div>
+
+            <div class="field checkbox-field">
+              <label class="checkbox-label">
+                <input type="checkbox" formControlName="isCurrent" />
+                I currently work here
+              </label>
+            </div>
+
+            <div class="field">
+              <label [for]="'startDate-' + index">Start date *</label>
+              <input
+                [id]="'startDate-' + index"
+                type="month"
+                formControlName="startDate"
+                [attr.aria-invalid]="controlInvalid(group, 'startDate')"
+              />
+              @if (controlInvalid(group, 'startDate')) {
+                <span class="field-error">A start month is required</span>
+              }
+            </div>
+
+            <div class="field">
+              <label [for]="'endDate-' + index">End date</label>
+              <input
+                [id]="'endDate-' + index"
+                type="month"
+                formControlName="endDate"
+                [attr.aria-invalid]="controlInvalid(group, 'endDate')"
+              />
+              @if (controlInvalid(group, 'endDate')) {
+                <span class="field-error">
+                  @if (group.get('isCurrent')?.value) {
+                    Clear the end date while this is your current role
+                  } @else {
+                    End date must not be before the start date
+                  }
+                </span>
+              }
+            </div>
+          </div>
+
+          <div class="field">
+            <label [for]="'description-' + index">Highlights</label>
+            <textarea
+              [id]="'description-' + index"
+              rows="3"
+              formControlName="description"
+              placeholder="One achievement per line"
+            ></textarea>
+          </div>
+        </div>
+      }
+    </section>
+
+    <section class="card" formArrayName="education">
+      <div class="section-head">
+        <h2>Education</h2>
+        <button type="button" class="btn-secondary btn-small" (click)="addEducation()">
+          Add education
+        </button>
+      </div>
+
+      @if (education.length === 0) {
+        <p class="hint">No education entries yet. This section is optional.</p>
+      }
+
+      @for (group of education.controls; track group; let index = $index) {
+        <div class="row card-row" [formGroupName]="index">
+          <div class="row-head">
+            <strong>Education {{ index + 1 }}</strong>
+            <button type="button" class="btn-danger btn-small" (click)="removeEducation(index)">
+              Remove
+            </button>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label [for]="'institution-' + index">Institution *</label>
+              <input
+                [id]="'institution-' + index"
+                formControlName="institution"
+                [attr.aria-invalid]="controlInvalid(group, 'institution')"
+              />
+              @if (controlInvalid(group, 'institution')) {
+                <span class="field-error">Institution is required</span>
+              }
+            </div>
+
+            <div class="field">
+              <label [for]="'degree-' + index">Degree</label>
+              <input [id]="'degree-' + index" formControlName="degree" placeholder="BSc" />
+            </div>
+
+            <div class="field">
+              <label [for]="'fieldOfStudy-' + index">Field of study</label>
+              <input
+                [id]="'fieldOfStudy-' + index"
+                formControlName="fieldOfStudy"
+                placeholder="Computer Science"
+              />
+            </div>
+
+            <div class="field">
+              <label [for]="'grade-' + index">Grade</label>
+              <input [id]="'grade-' + index" formControlName="grade" placeholder="First Class" />
+            </div>
+
+            <div class="field">
+              <label [for]="'edu-start-' + index">Start date</label>
+              <input
+                [id]="'edu-start-' + index"
+                type="month"
+                formControlName="startDate"
+                [attr.aria-invalid]="controlInvalid(group, 'startDate')"
+              />
+            </div>
+
+            <div class="field">
+              <label [for]="'edu-end-' + index">End date</label>
+              <input
+                [id]="'edu-end-' + index"
+                type="month"
+                formControlName="endDate"
+                [attr.aria-invalid]="controlInvalid(group, 'endDate')"
+              />
+              @if (controlInvalid(group, 'endDate')) {
+                <span class="field-error">End date must not be before the start date</span>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </section>
+
+    <section class="card" formArrayName="skills">
+      <div class="section-head">
+        <h2>Skills *</h2>
+        <button type="button" class="btn-secondary btn-small" (click)="addSkill()">
+          Add skill
+        </button>
+      </div>
+      <p class="hint">Skills sharing a category are grouped together in the PDF.</p>
+
+      @for (group of skills.controls; track group; let index = $index) {
+        <div class="row card-row skill-row" [formGroupName]="index">
+          <div class="field">
+            <label [for]="'skill-name-' + index">Skill *</label>
+            <input
+              [id]="'skill-name-' + index"
+              formControlName="name"
+              [attr.aria-invalid]="controlInvalid(group, 'name')"
+            />
+            @if (controlInvalid(group, 'name')) {
+              <span class="field-error">Skill name is required</span>
+            }
+          </div>
+
+          <div class="field">
+            <label [for]="'skill-category-' + index">Category</label>
+            <input
+              [id]="'skill-category-' + index"
+              formControlName="category"
+              placeholder="Languages"
+            />
+          </div>
+
+          <div class="field">
+            <label [for]="'skill-proficiency-' + index">Level (1-5)</label>
+            <select [id]="'skill-proficiency-' + index" formControlName="proficiency">
+              <option [ngValue]="null">Not set</option>
+              @for (level of [1, 2, 3, 4, 5]; track level) {
+                <option [ngValue]="level">{{ level }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="field skill-remove">
+            <button type="button" class="btn-danger btn-small" (click)="removeSkill(index)">
+              Remove
+            </button>
+          </div>
+        </div>
+      }
+    </section>
+
+    @if (serverErrors(); as errors) {
+      @if (errors['personal.email']) {
+        <p class="field-error server-error">Email: {{ errors['personal.email'] }}</p>
+      }
+      @if (errors['personal.summary']) {
+        <p class="field-error server-error">Summary: {{ errors['personal.summary'] }}</p>
+      }
+    }
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="saving()">
+        {{ saving() ? 'Saving…' : isEdit() ? 'Save changes' : 'Create CV' }}
+      </button>
+
+      @if (isEdit()) {
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="generatePdf()"
+          [disabled]="generating()"
+        >
+          {{ generating() ? 'Generating…' : 'Generate PDF' }}
+        </button>
+      }
+
+      <button type="button" class="btn-secondary" (click)="cancel()">Cancel</button>
+    </div>
+  </form>
+}

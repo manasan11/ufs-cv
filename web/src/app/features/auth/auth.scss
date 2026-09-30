@@ -1,0 +1,29 @@
+.auth-card {
+  max-width: 26rem;
+  margin: 2rem auto;
+}
+
+.auth-card h1 {
+  margin-bottom: 0.25rem;
+}
+
+.auth-card form {
+  margin-top: 1.1rem;
+}
+
+.auth-error {
+  margin: 0.8rem 0 0;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  background: var(--danger-soft);
+}
+
+.full {
+  width: 100%;
+}
+
+.switch {
+  margin: 1rem 0 0;
+  text-align: center;
+}

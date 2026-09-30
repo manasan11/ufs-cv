@@ -1,0 +1,75 @@
+<section class="auth-card card">
+  <h1>Create account</h1>
+  <p class="hint">Accounts let you keep ownership of the CVs you create.</p>
+
+  @if (formError()) {
+    <p class="field-error auth-error">{{ formError() }}</p>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div class="field">
+      <label for="reg-name">Full name</label>
+      <input
+        id="reg-name"
+        formControlName="fullName"
+        autocomplete="name"
+        [attr.aria-invalid]="form.controls.fullName.touched && form.controls.fullName.invalid"
+      />
+      @if (form.controls.fullName.touched && form.controls.fullName.invalid) {
+        <span class="field-error">Your name is required</span>
+      }
+    </div>
+
+    <div class="field">
+      <label for="reg-email">Email</label>
+      <input
+        id="reg-email"
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        [attr.aria-invalid]="form.controls.email.touched && form.controls.email.invalid"
+      />
+      @if (form.controls.email.touched && form.controls.email.invalid) {
+        <span class="field-error">A valid email address is required</span>
+      }
+    </div>
+
+    <div class="field">
+      <label for="reg-password">Password</label>
+      <input
+        id="reg-password"
+        type="password"
+        formControlName="password"
+        autocomplete="new-password"
+        [attr.aria-invalid]="form.controls.password.touched && form.controls.password.invalid"
+      />
+      @if (form.controls.password.touched && form.controls.password.invalid) {
+        <span class="field-error">Password must be at least 8 characters</span>
+      }
+    </div>
+
+    <div class="field">
+      <label for="reg-confirm">Confirm password</label>
+      <input
+        id="reg-confirm"
+        type="password"
+        formControlName="confirmPassword"
+        autocomplete="new-password"
+        [attr.aria-invalid]="
+          form.controls.confirmPassword.touched && form.controls.confirmPassword.invalid
+        "
+      />
+      @if (form.controls.confirmPassword.touched && form.controls.confirmPassword.invalid) {
+        <span class="field-error">Both passwords must match</span>
+      }
+    </div>
+
+    <button type="submit" class="btn-primary full" [disabled]="submitting()">
+      {{ submitting() ? 'Creating…' : 'Create account' }}
+    </button>
+  </form>
+
+  <p class="hint switch">
+    Already registered? <a routerLink="/login">Sign in</a>
+  </p>
+</section>

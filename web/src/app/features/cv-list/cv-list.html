@@ -1,0 +1,187 @@
+<section class="page-head">
+  <div>
+    <h1>CV Users</h1>
+    <p class="hint">Each row is one CV profile. Edit the details or generate a PDF.</p>
+  </div>
+  <a class="btn-primary" routerLink="/cvs/new">Add User</a>
+</section>
+
+<section class="card">
+  <div class="toolbar">
+    <div class="toolbar-field grow">
+      <label for="search">Search</label>
+      <input
+        id="search"
+        type="search"
+        placeholder="Name, email or headline"
+        [ngModel]="search()"
+        (ngModelChange)="onSearchInput($event)"
+      />
+    </div>
+
+    <div class="toolbar-field">
+      <label for="sort">Sort by</label>
+      <select
+        id="sort"
+        [ngModel]="sort()"
+        (ngModelChange)="onSortChange($event)"
+      >
+        <option value="-createdAt">Newest first</option>
+        <option value="createdAt">Oldest first</option>
+        <option value="name">Name A-Z</option>
+        <option value="-name">Name Z-A</option>
+        <option value="-updatedAt">Recently updated</option>
+        <option value="updatedAt">Least recently updated</option>
+      </select>
+    </div>
+
+    <div class="toolbar-field">
+      <label for="page-size">Per page</label>
+      <select
+        id="page-size"
+        [ngModel]="pageSize()"
+        (ngModelChange)="onPageSizeChange(+$event)"
+      >
+        @for (size of pageSizes; track size) {
+          <option [value]="size">{{ size }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <p class="state">Loading CVs&hellip;</p>
+  } @else if (rows().length === 0) {
+    <div class="state">
+      <p>No CVs found.</p>
+      @if (search()) {
+        <p class="hint">Try a different search term.</p>
+      } @else {
+        <a class="btn-primary" routerLink="/cvs/new">Add your first user</a>
+      }
+    </div>
+  } @else {
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Headline</th>
+            <th scope="col">Entries</th>
+            <th scope="col">Date Added</th>
+            <th scope="col"><span class="visually-hidden">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td class="cell-name">
+                {{ row.fullName }}
+                @if (row.phone) {
+                  <span class="hint block">{{ row.phone }}</span>
+                }
+              </td>
+              <td>
+                <a [href]="'mailto:' + row.email">{{ row.email }}</a>
+              </td>
+              <td>{{ row.headline || '—' }}</td>
+              <td>
+                <span class="badge">{{ row.experienceCount }} exp</span>
+                <span class="badge">{{ row.educationCount }} edu</span>
+                <span class="badge">{{ row.skillCount }} skills</span>
+              </td>
+              <td class="nowrap">{{ row.createdAt | date: 'mediumDate' }}</td>
+              <td>
+                <div class="actions">
+                  <a
+                    class="btn-secondary btn-small"
+                    [routerLink]="['/cvs', row.id, 'edit']"
+                  >
+                    Edit
+                  </a>
+                  <button
+                    type="button"
+                    class="btn-primary btn-small"
+                    (click)="generatePdf(row)"
+                    [disabled]="pdfId() === row.id"
+                  >
+                    {{ pdfId() === row.id ? 'Generating…' : 'Generate CV' }}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-danger btn-small"
+                    (click)="remove(row)"
+                    [disabled]="pendingId() === row.id"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pager">
+      <span class="hint">
+        Showing {{ rows().length }} of {{ meta().total }}
+        @if (meta().totalPages > 0) {
+          (page {{ meta().page }} of {{ meta().totalPages }})
+        }
+      </span>
+
+      @if (meta().totalPages > 1) {
+        <nav class="pager-controls" aria-label="Pagination">
+          <button
+            type="button"
+            class="btn-secondary btn-small"
+            (click)="goToPage(1)"
+            [disabled]="!meta().hasPrev"
+          >
+            &laquo; First
+          </button>
+          <button
+            type="button"
+            class="btn-secondary btn-small"
+            (click)="goToPage(meta().page - 1)"
+            [disabled]="!meta().hasPrev"
+          >
+            &lsaquo; Prev
+          </button>
+
+          @for (number of pageNumbers(); track number) {
+            <button
+              type="button"
+              class="btn-small"
+              [class.btn-primary]="number === meta().page"
+              [class.btn-secondary]="number !== meta().page"
+              (click)="goToPage(number)"
+              [attr.aria-current]="number === meta().page ? 'page' : null"
+            >
+              {{ number }}
+            </button>
+          }
+
+          <button
+            type="button"
+            class="btn-secondary btn-small"
+            (click)="goToPage(meta().page + 1)"
+            [disabled]="!meta().hasNext"
+          >
+            Next &rsaquo;
+          </button>
+          <button
+            type="button"
+            class="btn-secondary btn-small"
+            (click)="goToPage(meta().totalPages)"
+            [disabled]="!meta().hasNext"
+          >
+            Last &raquo;
+          </button>
+        </nav>
+      }
+    </div>
+  }
+</section>

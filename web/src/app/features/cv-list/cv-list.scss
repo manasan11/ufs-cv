@@ -1,0 +1,72 @@
+.page-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.page-head p {
+  margin: 0;
+}
+
+.toolbar {
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
+
+.toolbar-field {
+  min-width: 10rem;
+}
+
+.toolbar-field.grow {
+  flex: 1;
+  min-width: 14rem;
+}
+
+.state {
+  padding: 2.2rem 1rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.state p {
+  margin-bottom: 0.6rem;
+}
+
+.cell-name {
+  font-weight: 600;
+}
+
+.block {
+  display: block;
+  font-weight: 400;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+td .badge {
+  margin-right: 0.25rem;
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--border);
+}
+
+.pager-controls {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}

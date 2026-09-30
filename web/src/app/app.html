@@ -1,0 +1,40 @@
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" routerLink="/cvs">
+      <span class="brand-mark" aria-hidden="true">CV</span>
+      <span>CV Generator</span>
+    </a>
+
+    <nav class="nav" aria-label="Main">
+      <a routerLink="/cvs" routerLinkActive="active">CVs</a>
+      <a routerLink="/cvs/new" routerLinkActive="active">Add User</a>
+    </nav>
+
+    <div class="session">
+      @if (auth.user(); as user) {
+        <span class="session-name" [title]="user.email">{{ user.fullName }}</span>
+        <button type="button" class="btn-secondary btn-small" (click)="auth.logout()">
+          Sign out
+        </button>
+      } @else {
+        <a class="btn-secondary btn-small" routerLink="/login">Sign in</a>
+        <a class="btn-primary btn-small" routerLink="/register">Register</a>
+      }
+    </div>
+  </header>
+
+  <main class="content">
+    <router-outlet />
+  </main>
+
+  <div class="toasts" role="status" aria-live="polite">
+    @for (notice of notices(); track notice.id) {
+      <div class="toast" [class]="'toast-' + notice.tone">
+        <span>{{ notice.message }}</span>
+        <button type="button" class="toast-close" (click)="dismiss(notice.id)" aria-label="Dismiss">
+          &times;
+        </button>
+      </div>
+    }
+  </div>
+</div>

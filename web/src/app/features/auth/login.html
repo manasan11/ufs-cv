@@ -1,0 +1,46 @@
+<section class="auth-card card">
+  <h1>Sign in</h1>
+  <p class="hint">Optional: signing in links the CVs you create to your account.</p>
+
+  @if (formError()) {
+    <p class="field-error auth-error">{{ formError() }}</p>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div class="field">
+      <label for="login-email">Email</label>
+      <input
+        id="login-email"
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        [attr.aria-invalid]="form.controls.email.touched && form.controls.email.invalid"
+      />
+      @if (form.controls.email.touched && form.controls.email.invalid) {
+        <span class="field-error">A valid email address is required</span>
+      }
+    </div>
+
+    <div class="field">
+      <label for="login-password">Password</label>
+      <input
+        id="login-password"
+        type="password"
+        formControlName="password"
+        autocomplete="current-password"
+        [attr.aria-invalid]="form.controls.password.touched && form.controls.password.invalid"
+      />
+      @if (form.controls.password.touched && form.controls.password.invalid) {
+        <span class="field-error">Password must be at least 8 characters</span>
+      }
+    </div>
+
+    <button type="submit" class="btn-primary full" [disabled]="submitting()">
+      {{ submitting() ? 'Signing in…' : 'Sign in' }}
+    </button>
+  </form>
+
+  <p class="hint switch">
+    No account? <a routerLink="/register">Create one</a>
+  </p>
+</section>
